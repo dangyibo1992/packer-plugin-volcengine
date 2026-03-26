@@ -12,7 +12,6 @@ import (
 
 type stepConfigVolcengineSg struct {
 	sgId                string
-	UsingExistingSg     bool `mapstructure:"-"`
 	VolcengineEcsConfig *VolcengineEcsConfig
 }
 
@@ -33,7 +32,7 @@ func (s *stepConfigVolcengineSg) Run(ctx context.Context, stateBag multistep.Sta
 				s.VolcengineEcsConfig.SecurityGroupId), "")
 		}
 		ui.Say(fmt.Sprintf("Using existing SecurityGroup id is %s", s.VolcengineEcsConfig.SecurityGroupId))
-		s.UsingExistingSg = true
+		stateBag.Put("skipSecurityGroupRule", true)
 		return multistep.ActionContinue
 	}
 	//create new SecurityGroup

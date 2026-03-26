@@ -11,23 +11,15 @@ import (
 )
 
 type stepConfigVolcenginePublicIp struct {
-	eipId                 string
-	isCreate              bool
-	securityGroupIdWasSet bool
-	VolcengineEcsConfig   *VolcengineEcsConfig
+	eipId               string
+	isCreate            bool
+	VolcengineEcsConfig *VolcengineEcsConfig
 }
 
 func (s *stepConfigVolcenginePublicIp) Run(ctx context.Context, stateBag multistep.StateBag) multistep.StepAction {
 	ui := stateBag.Get("ui").(packer.Ui)
 	client := stateBag.Get("client").(*VolcengineClientWrapper)
 	instanceId := stateBag.Get("instanceId").(string)
-
-	// Check if security group was user-provided (not auto-created)
-	// by checking if the stepConfigVolcengineSg set the UsingExistingSg flag
-	usingExistingSg := stateBag.Get("usingExistingSg")
-	if usingExistingSg != nil {
-		s.securityGroupIdWasSet = usingExistingSg.(bool)
-	}
 	if s.VolcengineEcsConfig.AssociatePublicIpAddress {
 		if s.VolcengineEcsConfig.PublicIpId != "" {
 			//valid
@@ -66,7 +58,14 @@ func (s *stepConfigVolcenginePublicIp) Run(ctx context.Context, stateBag multist
 		//set sg rule - only for newly created security groups
 		// When using an existing security group (user-provided), we skip adding rules
 		// because we cannot determine what rules should be added
-		if !s.securityGroupIdWasSet {
+		// Check stateBag flag - if set, it means user provided existing security group
+		skipRuleConfig := false
+		if skipRuleConfigVal := stateBag.Get("skipSecurityGroupRule"); skipRuleConfigVal != nil {
+			skipRuleConfig = skipRuleConfigVal.(bool)
+		}
+		if skipRuleConfig {
+			ui.Say("Using existing SecurityGroup, skipping rule configuration (please ensure the security group has proper rules)")
+		} else {
 			ui.Say(fmt.Sprintf("Authorize SecurityGroup %s Rule", s.VolcengineEcsConfig.SecurityGroupId))
 			input2 := vpc.AuthorizeSecurityGroupIngressInput{
 				SecurityGroupId: volcengine.String(s.VolcengineEcsConfig.SecurityGroupId),
@@ -79,8 +78,6 @@ func (s *stepConfigVolcenginePublicIp) Run(ctx context.Context, stateBag multist
 			if err != nil {
 				return Halt(stateBag, err, "Error Authorize SecurityGroup Rule")
 			}
-		} else {
-			ui.Say("Using existing SecurityGroup, skipping rule configuration (please ensure the security group has proper rules)")
 		}
 
 		ui.Say(fmt.Sprintf("Associate Eip %s to ecs %s", s.eipId, instanceId))
