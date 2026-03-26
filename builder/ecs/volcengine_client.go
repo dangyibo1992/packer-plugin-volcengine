@@ -1,6 +1,7 @@
 package ecs
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/volcengine/volcengine-go-sdk/service/ecs"
@@ -17,8 +18,13 @@ const (
 	defaultRetryInterval = 10 * time.Second
 	defaultRetryTimes    = 10
 
-	defaultEcsName = "volcengine_packer_ecs"
+	defaultEcsNamePrefix = "volcengine_packer_ecs"
 )
+
+// getDefaultEcsName generates a unique ECS instance name with timestamp
+func getDefaultEcsName() string {
+	return fmt.Sprintf("%s_%s", defaultEcsNamePrefix, time.Now().Format("20060102150405"))
+}
 
 type VolcengineClientWrapper struct {
 	EcsClient *ecs.ECS

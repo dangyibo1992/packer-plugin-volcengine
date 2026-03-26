@@ -20,7 +20,7 @@ func (s *stepConfigVolcengineEcs) Run(ctx context.Context, stateBag multistep.St
 	client := stateBag.Get("client").(*VolcengineClientWrapper)
 	//create new ecs
 	if s.VolcengineEcsConfig.InstanceName == "" {
-		s.VolcengineEcsConfig.InstanceName = defaultEcsName
+		s.VolcengineEcsConfig.InstanceName = getDefaultEcsName()
 	}
 	//volume-sys
 	var volumes []*ecs.VolumeForRunInstancesInput
