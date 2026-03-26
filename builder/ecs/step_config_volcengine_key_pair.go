@@ -22,7 +22,7 @@ func (s *stepConfigVolcengineKeyPair) Run(ctx context.Context, stateBag multiste
 	if s.VolcengineEcsConfig.Comm.SSHPrivateKeyFile != "" {
 		if s.VolcengineEcsConfig.Comm.SSHKeyPairName == "" {
 			return Halt(stateBag,
-				fmt.Errorf(fmt.Sprintf("ssh_keypair_name is empty")), "")
+				fmt.Errorf("ssh_keypair_name is empty"), "")
 		}
 		ui.Say("Using existing SSH private key")
 		privateKeyBytes, err := s.VolcengineEcsConfig.Comm.ReadSSHPrivateKeyFile()

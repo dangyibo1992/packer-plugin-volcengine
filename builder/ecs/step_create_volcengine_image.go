@@ -2,7 +2,6 @@ package ecs
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	"github.com/hashicorp/packer-plugin-sdk/packer"
@@ -18,7 +17,7 @@ func (s *stepCreateVolcengineImage) Run(ctx context.Context, stateBag multistep.
 	ui := stateBag.Get("ui").(packer.Ui)
 	client := stateBag.Get("client").(*VolcengineClientWrapper)
 	instanceId := stateBag.Get("instanceId").(string)
-	ui.Say(fmt.Sprintf("create new image "))
+	ui.Say("create new image ")
 	input := ecs.CreateImageInput{
 		InstanceId:       volcengine.String(instanceId),
 		ImageName:        volcengine.String(s.VolcengineEcsConfig.TargetImageName),

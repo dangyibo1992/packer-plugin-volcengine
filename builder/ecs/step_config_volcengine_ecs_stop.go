@@ -2,7 +2,6 @@ package ecs
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	"github.com/hashicorp/packer-plugin-sdk/packer"
@@ -18,7 +17,7 @@ func (s *stepConfigVolcengineEcsStop) Run(ctx context.Context, stateBag multiste
 	ui := stateBag.Get("ui").(packer.Ui)
 	client := stateBag.Get("client").(*VolcengineClientWrapper)
 	instanceId := stateBag.Get("instanceId").(string)
-	ui.Say(fmt.Sprintf("stoping ecs instance"))
+	ui.Say("stoping ecs instance")
 	input := ecs.StopInstanceInput{
 		InstanceId: volcengine.String(instanceId),
 	}

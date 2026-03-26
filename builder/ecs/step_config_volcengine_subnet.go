@@ -30,8 +30,8 @@ func (s *stepConfigVolcengineSubnet) Run(ctx context.Context, stateBag multistep
 		}
 
 		if *out.Subnets[0].VpcId != s.VolcengineEcsConfig.VpcId {
-			return Halt(stateBag, fmt.Errorf(fmt.Sprintf("Subnet id %s vpc not match",
-				s.VolcengineEcsConfig.SubnetId)), "")
+			return Halt(stateBag, fmt.Errorf("Subnet id %s vpc not match",
+				s.VolcengineEcsConfig.SubnetId), "")
 		}
 		s.VolcengineEcsConfig.AvailabilityZone = *out.Subnets[0].ZoneId
 		ui.Say(fmt.Sprintf("Using existing Subnet id is %s", s.VolcengineEcsConfig.SubnetId))

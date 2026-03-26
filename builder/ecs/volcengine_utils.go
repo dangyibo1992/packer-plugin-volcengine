@@ -117,7 +117,7 @@ func GetCidrHostNum(maskLen int) uint {
 func GetCidrIpMask(maskLen int) string {
 	// ^uint32(0)二进制为32个比特1，通过向左位移，得到CIDR掩码的二进制
 	cidrMask := ^uint32(0) << uint(32-maskLen)
-	fmt.Println(fmt.Sprintf("%b \n", cidrMask))
+	fmt.Printf("%b\n", cidrMask)
 	//计算CIDR掩码的四个片段，将想要得到的片段移动到内存最低8位后，将其强转为8位整型，从而得到
 	cidrMaskSeg1 := uint8(cidrMask >> 24)
 	cidrMaskSeg2 := uint8(cidrMask >> 16)
@@ -152,7 +152,7 @@ func GetIpSegRange(userSegIp, offset uint8) (int, int) {
 
 func StringInSlice(v string, valid []string, ignoreCase bool) bool {
 	for _, str := range valid {
-		if v == str || (ignoreCase && strings.ToLower(v) == strings.ToLower(str)) {
+		if v == str || (ignoreCase && strings.EqualFold(v, str)) {
 			return true
 		}
 	}
