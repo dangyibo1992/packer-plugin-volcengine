@@ -56,6 +56,36 @@ func (s *stepConfigVolcengineSg) Run(ctx context.Context, stateBag multistep.Sta
 	if err != nil {
 		return Halt(stateBag, err, "Error creating new SecurityGroup")
 	}
+
+	// Add security group rules for SSH (22) and RDP (3389)
+	ui.Say(fmt.Sprintf("Authorizing SecurityGroup %s Rules", s.VolcengineEcsConfig.SecurityGroupId))
+
+	// SSH rule (TCP 22)
+	sshInput := vpc.AuthorizeSecurityGroupIngressInput{
+		SecurityGroupId: volcengine.String(s.VolcengineEcsConfig.SecurityGroupId),
+		Protocol:        volcengine.String("tcp"),
+		PortStart:       volcengine.Int64(22),
+		PortEnd:         volcengine.Int64(22),
+		CidrIp:          volcengine.String("0.0.0.0/0"),
+	}
+	_, err = client.VpcClient.AuthorizeSecurityGroupIngressWithContext(ctx, &sshInput)
+	if err != nil {
+		return Halt(stateBag, err, "Error authorizing SSH security group rule")
+	}
+
+	// RDP rule (TCP 3389)
+	rdpInput := vpc.AuthorizeSecurityGroupIngressInput{
+		SecurityGroupId: volcengine.String(s.VolcengineEcsConfig.SecurityGroupId),
+		Protocol:        volcengine.String("tcp"),
+		PortStart:       volcengine.Int64(3389),
+		PortEnd:         volcengine.Int64(3389),
+		CidrIp:          volcengine.String("0.0.0.0/0"),
+	}
+	_, err = client.VpcClient.AuthorizeSecurityGroupIngressWithContext(ctx, &rdpInput)
+	if err != nil {
+		return Halt(stateBag, err, "Error authorizing RDP security group rule")
+	}
+
 	return multistep.ActionContinue
 }
 

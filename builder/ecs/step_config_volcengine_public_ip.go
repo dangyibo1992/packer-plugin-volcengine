@@ -55,30 +55,6 @@ func (s *stepConfigVolcenginePublicIp) Run(ctx context.Context, stateBag multist
 			}
 			stateBag.Put("PublicIp", *out.EipAddresses[0].EipAddress)
 		}
-		//set sg rule - only for newly created security groups
-		// When using an existing security group (user-provided), we skip adding rules
-		// because we cannot determine what rules should be added
-		// Check stateBag flag - if set, it means user provided existing security group
-		skipRuleConfig := false
-		if skipRuleConfigVal := stateBag.Get("skipSecurityGroupRule"); skipRuleConfigVal != nil {
-			skipRuleConfig = skipRuleConfigVal.(bool)
-		}
-		if skipRuleConfig {
-			ui.Say("Using existing SecurityGroup, skipping rule configuration (please ensure the security group has proper rules)")
-		} else {
-			ui.Say(fmt.Sprintf("Authorize SecurityGroup %s Rule", s.VolcengineEcsConfig.SecurityGroupId))
-			input2 := vpc.AuthorizeSecurityGroupIngressInput{
-				SecurityGroupId: volcengine.String(s.VolcengineEcsConfig.SecurityGroupId),
-				Protocol:        volcengine.String("tcp"),
-				PortStart:       volcengine.Int64(22),
-				PortEnd:         volcengine.Int64(22),
-				CidrIp:          volcengine.String("0.0.0.0/0"),
-			}
-			_, err := client.VpcClient.AuthorizeSecurityGroupIngressWithContext(ctx, &input2)
-			if err != nil {
-				return Halt(stateBag, err, "Error Authorize SecurityGroup Rule")
-			}
-		}
 
 		ui.Say(fmt.Sprintf("Associate Eip %s to ecs %s", s.eipId, instanceId))
 		var err error
