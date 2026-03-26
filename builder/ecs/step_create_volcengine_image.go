@@ -20,8 +20,10 @@ func (s *stepCreateVolcengineImage) Run(ctx context.Context, stateBag multistep.
 	instanceId := stateBag.Get("instanceId").(string)
 	ui.Say(fmt.Sprintf("create new image "))
 	input := ecs.CreateImageInput{
-		InstanceId: volcengine.String(instanceId),
-		ImageName:  volcengine.String(s.VolcengineEcsConfig.TargetImageName),
+		InstanceId:       volcengine.String(instanceId),
+		ImageName:        volcengine.String(s.VolcengineEcsConfig.TargetImageName),
+		CreateWholeImage: volcengine.Bool(false), // 不创建整机镜像，只创建系统盘镜像
+		NeedDetection:    volcengine.Bool(false), // 不进行镜像检测
 	}
 	output, err := client.EcsClient.CreateImageWithContext(ctx, &input)
 	if err != nil {
