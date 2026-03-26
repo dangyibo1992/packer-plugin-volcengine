@@ -23,8 +23,6 @@ type VolcengineEcsConfig struct {
 	//sg
 	SecurityGroupId   string `mapstructure:"security_group_id" required:"false"`
 	SecurityGroupName string `mapstructure:"security_group_name" required:"false"`
-	//internal - tracks if using existing security group
-	UsingExistingSg bool `mapstructure:"-"`
 	//eip
 	PublicIpId               string `mapstructure:"public_ip_id" required:"false"`
 	AssociatePublicIpAddress bool   `mapstructure:"associate_public_ip_address" required:"false"`

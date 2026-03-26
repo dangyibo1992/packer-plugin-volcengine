@@ -12,7 +12,7 @@ import (
 
 type stepConfigVolcengineSg struct {
 	sgId                string
-	UsingExistingSg     bool
+	UsingExistingSg     bool `mapstructure:"-"`
 	VolcengineEcsConfig *VolcengineEcsConfig
 }
 
