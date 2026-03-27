@@ -2,6 +2,7 @@ package ecs
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/hashicorp/packer-plugin-sdk/multistep"
 	"github.com/hashicorp/packer-plugin-sdk/packer"
@@ -37,13 +38,17 @@ func (s *stepCreateVolcengineImage) Run(ctx context.Context, stateBag multistep.
 
 	// share image to specified accounts
 	if len(s.VolcengineEcsConfig.ImageShareAccounts) > 0 {
-		ui.Say("sharing image to accounts: " + *s.VolcengineEcsConfig.ImageShareAccounts[0])
-		shareInput := &ecs.ModifyImageSharePermissionInput{
-			ImageId:        volcengine.String(*output.ImageId),
-			AddAccounts:    s.VolcengineEcsConfig.ImageShareAccounts,
-			RemoveAccounts: nil,
+		ui.Say("sharing image to accounts...")
+		// Use Common API to properly handle list parameters
+		shareInput := map[string]interface{}{
+			"ImageId": *output.ImageId,
 		}
-		_, err = client.EcsClient.ModifyImageSharePermissionWithContext(ctx, shareInput)
+		// Format AddAccounts as AddAccounts.1, AddAccounts.2, etc.
+		for i, account := range s.VolcengineEcsConfig.ImageShareAccounts {
+			key := fmt.Sprintf("AddAccounts.%d", i+1)
+			shareInput[key] = *account
+		}
+		_, err = client.EcsClient.ModifyImageSharePermissionCommonWithContext(ctx, &shareInput)
 		if err != nil {
 			return Halt(stateBag, err, "Error sharing image")
 		}
