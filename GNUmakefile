@@ -8,11 +8,12 @@ HASHICORP_PACKER_PLUGIN_SDK_VERSION?=$(shell go list -m github.com/hashicorp/pac
 .PHONY: dev
 
 build:
-	@go build -o ${BINARY}
+	@mkdir -p bin
+	@go build -o bin/${BINARY}
 
 dev: build
 	@mkdir -p ~/.packer.d/plugins/
-	@mv ${BINARY} ~/.packer.d/plugins/${BINARY}
+	@cp bin/${BINARY} ~/.packer.d/plugins/${BINARY}
 
 test:
 	@go test -race -count $(COUNT) $(TEST) -timeout=3m
