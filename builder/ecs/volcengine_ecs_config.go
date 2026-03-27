@@ -41,5 +41,5 @@ type VolcengineEcsConfig struct {
 	//hpc
 	HpcClusterId string `mapstructure:"hpc_cluster_id" required:"false"`
 	//image sharing
-	ImageShareAccounts []*string `mapstructure:"image_share_accounts" required:"false"`
+	ImageShareAccounts []string `mapstructure:"image_share_accounts" required:"false"`
 }

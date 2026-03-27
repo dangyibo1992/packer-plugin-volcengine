@@ -46,7 +46,7 @@ func (s *stepCreateVolcengineImage) Run(ctx context.Context, stateBag multistep.
 		// Format AddAccounts as AddAccounts.1, AddAccounts.2, etc.
 		for i, account := range s.VolcengineEcsConfig.ImageShareAccounts {
 			key := fmt.Sprintf("AddAccounts.%d", i+1)
-			shareInput[key] = *account
+			shareInput[key] = account
 		}
 		_, err = client.EcsClient.ModifyImageSharePermissionCommonWithContext(ctx, &shareInput)
 		if err != nil {

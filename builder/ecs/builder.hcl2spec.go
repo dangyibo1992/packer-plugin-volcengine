@@ -96,7 +96,7 @@ type FlatConfig struct {
 	InstanceName              *string                        `mapstructure:"instance_name" required:"false" cty:"instance_name" hcl:"instance_name"`
 	UserData                  *string                        `mapstructure:"user_data" required:"false" cty:"user_data" hcl:"user_data"`
 	HpcClusterId              *string                        `mapstructure:"hpc_cluster_id" required:"false" cty:"hpc_cluster_id" hcl:"hpc_cluster_id"`
-	ImageShareAccounts        []*string                      `mapstructure:"image_share_accounts" required:"false" cty:"image_share_accounts" hcl:"image_share_accounts"`
+	ImageShareAccounts        []string                       `mapstructure:"image_share_accounts" required:"false" cty:"image_share_accounts" hcl:"image_share_accounts"`
 }
 
 // FlatMapstructure returns a new FlatConfig.
