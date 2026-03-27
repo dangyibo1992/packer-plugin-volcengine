@@ -30,9 +30,26 @@ func (s *stepCreateVolcengineImage) Run(ctx context.Context, stateBag multistep.
 	}
 	_, err = WaitImageStatus(stateBag, *output.ImageId, "available")
 	if err != nil {
-		return Halt(stateBag, err, "Error stop ecs instance")
+		return Halt(stateBag, err, "Error waiting for image")
 	}
 	stateBag.Put("TargetImageId", *output.ImageId)
+	ui.Say("image created successfully: " + *output.ImageId)
+
+	// share image to specified accounts
+	if len(s.VolcengineEcsConfig.ImageShareAccounts) > 0 {
+		ui.Say("sharing image to accounts: " + *s.VolcengineEcsConfig.ImageShareAccounts[0])
+		shareInput := &ecs.ModifyImageSharePermissionInput{
+			ImageId:        volcengine.String(*output.ImageId),
+			AddAccounts:    s.VolcengineEcsConfig.ImageShareAccounts,
+			RemoveAccounts: nil,
+		}
+		_, err = client.EcsClient.ModifyImageSharePermissionWithContext(ctx, shareInput)
+		if err != nil {
+			return Halt(stateBag, err, "Error sharing image")
+		}
+		ui.Say("image shared successfully")
+	}
+
 	return multistep.ActionContinue
 }
 

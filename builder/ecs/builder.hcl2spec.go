@@ -96,6 +96,7 @@ type FlatConfig struct {
 	InstanceName              *string                        `mapstructure:"instance_name" required:"false" cty:"instance_name" hcl:"instance_name"`
 	UserData                  *string                        `mapstructure:"user_data" required:"false" cty:"user_data" hcl:"user_data"`
 	HpcClusterId              *string                        `mapstructure:"hpc_cluster_id" required:"false" cty:"hpc_cluster_id" hcl:"hpc_cluster_id"`
+	ImageShareAccounts        []*string                      `mapstructure:"image_share_accounts" required:"false" cty:"image_share_accounts" hcl:"image_share_accounts"`
 }
 
 // FlatMapstructure returns a new FlatConfig.
@@ -196,6 +197,7 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"instance_name":                &hcldec.AttrSpec{Name: "instance_name", Type: cty.String, Required: false},
 		"user_data":                    &hcldec.AttrSpec{Name: "user_data", Type: cty.String, Required: false},
 		"hpc_cluster_id":               &hcldec.AttrSpec{Name: "hpc_cluster_id", Type: cty.String, Required: false},
+		"image_share_accounts":         &hcldec.AttrSpec{Name: "image_share_accounts", Type: cty.List(cty.String), Required: false},
 	}
 	return s
 }
